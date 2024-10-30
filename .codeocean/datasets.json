@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"attached_datasets": [
+		{
+			"id": "c5b59828-670c-46d6-bcaf-7a358d8c1177",
+			"mount": "102224_Meso2_noga_test_25mm_face"
+		}
+	]
+}
