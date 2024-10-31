@@ -1,2 +1,4 @@
 metadata_version: 1
 name: load_behavior_video
+
+This capsule loads behavior videos and saved gray frames as zarr file.
