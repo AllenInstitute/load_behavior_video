@@ -1,4 +1,6 @@
 metadata_version: 1
 name: load_behavior_video
-
-This capsule loads behavior videos and saved gray frames as zarr file.
+description: Loads face behavior videos in attached data assets and saves them in
+  chunked zarr files for future processing.
+authors:
+- name: Iryna Yavorska
