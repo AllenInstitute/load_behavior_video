@@ -5,10 +5,15 @@ import os
 import pickle
 from tqdm import tqdm
 from multiprocessing import Pool
+import dask.array as da
+import dask
+import zarr
 import utils  # local module
 
 DATA_PATH = '/root/capsule/data/'
 OUTPUT_PATH = '/root/capsule/results/'
+
+### TO DO: Add metadata to zarr files
 
 class VideoLoader:
     """
@@ -111,61 +116,48 @@ class VideoLoader:
         if stop_sec is not None:
             stop_frame = int(stop_sec * self.fps)
         
+        
         # If no specific frames, load full video
         if start_frame is None and stop_frame is None:
             start_frame, stop_frame = 1, self.total_frames
 
-        self.'gray': gray,
-        self.'start_frame': start_frame,
-        self.'stop_frame': stop_frame}
+        # save to the object 
+        self.gray = gray
+        self.start_frame = start_frame
+        self.stop_frame = stop_frame
 
+        frame_shape = (self.height, self.width)
+        num_frames = self.total_frames
+
+        # create video chunks
         chunks = []
-        for start in range(start_frame, stop_frame, chunk_size):
-            delayed_chunk = dask.delayed(process_chunk)(start, chunk_size, frame_shape, start_frame, stop_frame)
+        for start in range(start_frame, num_frames, self.chunk_size):
+            delayed_chunk = dask.delayed(utils.process_chunk)(start=start, chunk_size = self.chunk_size,
+                                        frame_shape = frame_shape, video_path = self.video_path)
             chunks.append(delayed_chunk)
-            
-        self.frames_zarr_path = ''
 
+        
+        # Compute all chunks in parallel, convert to a Dask array, and save to Zarr
         dask_chunks = [
-        da.from_delayed(chunk, shape=(min(chunk_size, stop_frame - start), *frame_shape), dtype='f4') 
-        for start, chunk in zip(range(start_frame, stop_frame, chunk_size), chunks)]
-            dask_array = da.concatenate(dask_chunks, axis=0)
+            da.from_delayed(chunk, shape=(min(self.chunk_size, num_frames - start), *frame_shape), dtype='f4') 
+            for start, chunk in zip(range(start_frame, num_frames, self.chunk_size), chunks)]
+        dask_array = da.concatenate(dask_chunks, axis=0)
 
+        # create path to zarr files
+        frames_zarr_path = utils.get_zarr_paths(self, path_to = 'gray_frames')
+        self.frames_zarr_path =  frames_zarr_path
 
-
+        # save zarr files
+        zarr_store_frames = zarr.DirectoryStore(frames_zarr_path)
+        dask_array.to_zarr(zarr_store_frames, overwrite=True)
+        # self.save_zarr(data=dask_array, frames_zarr_path=frames_zarr_path)
         return self
 
-    def _save(self, save_dir: str, suffix: str = ''):
-        """Saves the loaded frames and metadata to a specified directory."""
-        if not hasattr(self, 'mouse_id') or not hasattr(self, 'project'):
-            self._get_metadata()
+    # kept telling me that i passed more than one object for data?
+    # def save_zarr(data, frames_zarr_path):
+    #     zarr_store_frames = zarr.DirectoryStore(frames_zarr_path)
+    #     data.to_zarr(zarr_store_frames, overwrite=True)
 
-        fullpath = os.path.join(save_dir, f'{self.mouse_id}')
-        if os.path.exists(fullpath) is False:
-            os.makedirs(fullpath, exist_ok=True)
-
-        if not suffix:
-            print('suffix is empty, consider adding a date or other unique character to the filename')
-        
-        videoname = os.path.basename(self.video_path).replace('.mp4', '').replace('.avi', '')
-        filename = f"{self.mouse_id}_{self.project}_{videoname}_{suffix}.pkl"
-        fullfile = os.path.join(fullpath, filename)
-        
-        #cv2 object cannot be pickled
-        del self.cap
-
-        # Save the object using pickle
-        with open(fullfile, 'wb') as f:
-            pickle.dump(self, f)
-        
-        # Get the size of the saved file
-        file_size = os.path.getsize(fullfile)
-        
-        # Convert file size to kilobytes (KB)
-        file_size_kb = file_size / 1024
-        
-        print(f"Object saved as {fullfile}")
-        print(f"File size: {file_size_kb:.2f} KB")
 
     def _process(self, start_sec: float = None, stop_sec: float = None,
                  gray: bool = True, save_dir: str = OUTPUT_PATH, suffix: str = ''):
@@ -190,5 +182,3 @@ class VideoLoader:
         if not hasattr(self, 'timestamps'):
             self._get_timestamps()
 
-        # Save processed frames and metadata
-        self._save(save_dir, suffix=suffix)

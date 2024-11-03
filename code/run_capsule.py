@@ -26,7 +26,7 @@ def run():
                 loader = VideoLoader(video_path=video_path)
             
                 # Process the video (load frames, metadata, timestamps, and save results)
-                loader._process(gray=True, start_sec = 400, stop_sec = 500, save_dir=results_folder)
+                loader._process(gray=True, start_sec = None, stop_sec = None, save_dir=results_folder)
             else:
                 print('processing only face videos for now')
 

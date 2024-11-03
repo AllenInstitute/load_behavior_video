@@ -2,6 +2,7 @@ import os
 from tqdm import tqdm
 import json
 import cv2
+import numpy as np
 
 
 def load_camera_json(json_path: str) -> dict:
@@ -76,39 +77,61 @@ def get_video_paths(directory: str = '/root/capsule/data', subselect: str = None
 
     return video_paths
 
-def process_chunk(self, start):
-    cap = self.cap
-    start_frame, stop_frame = self.start_frame, self.stop_frame
-    chunk_size = self.chunk_size
+def process_chunk(start, chunk_size, frame_shape, video_path):
+    cap = cv2.VideoCapture(video_path)
     cap.set(cv2.CAP_PROP_POS_FRAMES, start)  # Set starting frame
     chunk = []
     for i in range(chunk_size):
-        current_frame = start + i
-        if current_frame >= stop_frame:
-            break
         ret, frame = cap.read()
         if not ret:
             break  # Stop if no frame is returned (end of video)
-        if self.gray:
-            # Convert to grayscale
-            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Convert to grayscale
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Resize the frame to the target frame shape
+        gray_frame = cv2.resize(gray_frame, (frame_shape[1], frame_shape[0]))
         chunk.append(gray_frame)
     cap.release()
     if len(chunk) == 0:
         raise ValueError(f"No frames found in chunk starting at {start}. Check the video length.")
     return np.stack(chunk)
 
+# def process_chunk(self, start):
+#     cap = self.cap
+#     start_frame, stop_frame = self.start_frame, self.stop_frame
+#     chunk_size = self.chunk_size
+#     cap.set(cv2.CAP_PROP_POS_FRAMES, start)  # Set starting frame
+#     chunk = []
+#     for i in range(chunk_size):
+#         current_frame = start + i
+#         if current_frame >= stop_frame:
+#             break
+#         ret, frame = cap.read()
+#         if not ret:
+#             break  # Stop if no frame is returned (end of video)
+#         if self.gray:
+#             # Convert to grayscale
+#             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#         gray_frame = cv2.resize(gray_frame, (self.width, self.height))
+#         chunk.append(gray_frame)
+#     cap.release()
+    
+
 def get_results_folder():
     return '/root/capsule/results'
 
-def get_zarr_paths(self, path_to = 'gray_frames')
+def get_zarr_paths(self, path_to = 'gray_frames'):
     zarr_folder = self.mouse_id + '_' +self.camera_label + '_' + self.data_asset_id
+    if os.path.exists(os.path.join(get_results_folder(), zarr_folder)) is False:
+        os.makedirs(os.path.join(get_results_folder(), zarr_folder))
+    
     if path_to == 'gray_frames':
         filename = 'processed_frames.zarr'
         filepath = os.path.join(get_results_folder(), zarr_folder, filename)
-    elif path_to = 'motion_energy_frames': 
+
+    elif path_to == 'motion_energy_frames': 
         filename = 'motion_energy_frames.zarr'
         filepath = os.path.join(get_results_folder(), zarr_folder, filename)
+    
     return filepath
     
     
