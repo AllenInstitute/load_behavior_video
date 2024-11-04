@@ -2,8 +2,12 @@
 	"version": 1,
 	"attached_datasets": [
 		{
-			"id": "c5b59828-670c-46d6-bcaf-7a358d8c1177",
-			"mount": "102224_Meso2_noga_test_25mm_face"
+			"id": "281e87ee-05d6-4cf1-93da-e3675040533e",
+			"mount": "multiplane-ophys_731327_2024-08-23_13-22-02"
+		},
+		{
+			"id": "dbfa1372-a082-4404-9276-ae9ace612f06",
+			"mount": "multiplane-ophys_731327_2024-08-22_14-11-29"
 		}
 	]
 }

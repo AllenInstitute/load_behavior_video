@@ -1,2 +1,6 @@
 metadata_version: 1
 name: load_behavior_video
+description: Loads face behavior videos in attached data assets and saves them in
+  chunked zarr files for future processing.
+authors:
+- name: Iryna Yavorska
