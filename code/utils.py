@@ -127,6 +127,17 @@ def get_results_folder() -> str:
     return '/root/capsule/results'
 
 
+def object_to_dict(obj):
+    if hasattr(obj, "__dict__"):
+        return {key: object_to_dict(value) for key, value in vars(obj).items()}
+    elif isinstance(obj, list):
+        return [object_to_dict(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: object_to_dict(value) for key, value in obj.items()}
+    else:
+        return obj
+
+
 def get_zarr_paths(self, path_to: str = 'gray_frames') -> str:
     """
     Construct the path for Zarr storage based on mouse and camera metadata.

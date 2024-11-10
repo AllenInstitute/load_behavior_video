@@ -4,6 +4,7 @@ import dask.array as da
 import dask
 import zarr
 import utils  # local module for metadata and video processing utilities
+import json
 
 DATA_PATH = '/root/capsule/data/'
 OUTPUT_PATH = '/root/capsule/results/'
@@ -62,7 +63,7 @@ class VideoLoader:
         total_seconds = hours * 3600 + minutes * 60 + seconds
         
         time_interval = 1 / self.fps
-        self.timestamps = np.arange(0, total_seconds, time_interval)[:self.video_info['FramesRecorded']]
+        self.timestamps = list(np.arange(0, total_seconds, time_interval)[:self.video_info['FramesRecorded']])
 
     def _load_video(self, start_sec: float = None, stop_sec: float = None, gray: bool = True):
         """
@@ -93,11 +94,22 @@ class VideoLoader:
         ]
         dask_array = da.concatenate(dask_chunks, axis=0)
 
+        # save files
         self.frames_zarr_path = utils.get_zarr_paths(self, path_to='gray_frames')
         zarr_store = zarr.DirectoryStore(self.frames_zarr_path)
-        dask_array.to_zarr(zarr_store, overwrite=True)
-        
+
+        # Create the Zarr group at the root (root_group) and save the array in the 'data' path (subgroup)
+        root_group = zarr.group(store=zarr_store, overwrite=True)
+        dask_array.to_zarr(zarr_store, component='data', overwrite=True)
+
+        del self.cap # remove cap to be able to save json
+        meta_dict = utils.object_to_dict(self)
+        root_group.attrs['metadata'] = json.dumps(meta_dict)
+
+        print(f'Saved frames and metadata in {self.frames_zarr_path}')
+
         return self
+
 
     def _process(self, start_sec: float = None, stop_sec: float = None, gray: bool = True, save_dir: str = OUTPUT_PATH):
         """
@@ -117,4 +129,6 @@ class VideoLoader:
             self._get_timestamps()
         
         self._load_video(start_sec=start_sec, stop_sec=stop_sec, gray=gray)
+
+
         
