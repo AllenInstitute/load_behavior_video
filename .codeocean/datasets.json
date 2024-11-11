@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"attached_datasets": [
+		{
+			"id": "5b22e1d1-08f6-440a-8c7d-7f2581c24a5b",
+			"mount": "multiplane-ophys_721291_2024-04-24_08-13-29"
+		},
+		{
+			"id": "81b28f59-3080-4c71-9a8f-51d8742129a8",
+			"mount": "multiplane-ophys_721291_2024-05-13_08-27-23"
+		},
+		{
+			"id": "aacce602-4092-4caa-ad6b-676c23db93e1",
+			"mount": "multiplane-ophys_721291_2024-04-26_08-05-27"
+		}
+	]
+}
