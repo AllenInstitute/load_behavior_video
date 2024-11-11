@@ -138,7 +138,7 @@ def object_to_dict(obj):
         return obj
 
 
-def get_zarr_paths(self, path_to: str = 'gray_frames') -> str:
+def get_zarr_path(self, path_to: str = 'gray_frames') -> str:
     """
     Construct the path for Zarr storage based on mouse and camera metadata.
 

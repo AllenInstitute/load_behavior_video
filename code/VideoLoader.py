@@ -95,7 +95,7 @@ class VideoLoader:
         dask_array = da.concatenate(dask_chunks, axis=0)
 
         # save files
-        self.frames_zarr_path = utils.get_zarr_paths(self, path_to='gray_frames')
+        self.frames_zarr_path = utils.get_zarr_path(self, path_to='gray_frames')
         zarr_store = zarr.DirectoryStore(self.frames_zarr_path)
 
         # Create the Zarr group at the root (root_group) and save the array in the 'data' path (subgroup)
