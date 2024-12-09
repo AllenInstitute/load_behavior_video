@@ -2,16 +2,40 @@
 	"version": 1,
 	"attached_datasets": [
 		{
-			"id": "5b22e1d1-08f6-440a-8c7d-7f2581c24a5b",
-			"mount": "multiplane-ophys_721291_2024-04-24_08-13-29"
+			"id": "1a163953-da17-4906-93f8-abe0334da73b",
+			"mount": "multiplane-ophys_749315_2024-11-20_14-58-05"
 		},
 		{
-			"id": "81b28f59-3080-4c71-9a8f-51d8742129a8",
-			"mount": "multiplane-ophys_721291_2024-05-13_08-27-23"
+			"id": "5df264f0-2994-44a4-ba17-a0cbdf3f94f9",
+			"mount": "multiplane-ophys_749315_2024-11-01_15-10-45"
 		},
 		{
-			"id": "aacce602-4092-4caa-ad6b-676c23db93e1",
-			"mount": "multiplane-ophys_721291_2024-04-26_08-05-27"
+			"id": "6562f6c0-aa8b-41bf-9289-f294ba93362a",
+			"mount": "multiplane-ophys_749315_2024-11-18_14-47-15"
+		},
+		{
+			"id": "87dded61-a602-41d9-942a-15462731acaf",
+			"mount": "multiplane-ophys_749315_2024-11-04_14-07-57"
+		},
+		{
+			"id": "8c8b2ff5-d5a7-4ca2-bb19-e3e9e5caa8e6",
+			"mount": "multiplane-ophys_749315_2024-11-26_10-39-07"
+		},
+		{
+			"id": "91c891f1-3b9b-4e42-b4aa-923c50c553f5",
+			"mount": "multiplane-ophys_749315_2024-11-05_11-53-43"
+		},
+		{
+			"id": "9603e3b3-fca3-4829-bc07-e2a913456c64",
+			"mount": "multiplane-ophys_749315_2024-11-22_14-41-18"
+		},
+		{
+			"id": "ef0ee62d-0ca1-43aa-9125-a2a95ed2d158",
+			"mount": "multiplane-ophys_749315_2024-11-25_10-52-45"
+		},
+		{
+			"id": "f3ef94ac-e429-48e5-8e33-8b6d90b4601d",
+			"mount": "multiplane-ophys_749315_2024-10-30_16-14-58"
 		}
 	]
 }
