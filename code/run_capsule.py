@@ -6,7 +6,7 @@ from VideoLoader import VideoLoader  # Correct import
 
 DATA_PATH = '/root/capsule/data'
 OUTPUT_PATH = '/root/capsule/results'
-tag = 'nose'
+tag = 'face'
 def run():
     def analyze_and_save_videos(data_folder=DATA_PATH, results_folder=OUTPUT_PATH, subselect=None):
         # Ensure results directory exists
