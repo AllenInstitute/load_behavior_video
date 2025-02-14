@@ -46,6 +46,7 @@ class VideoLoader:
         self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     def _get_metadata(self):
+    #  Need to add session information
         """Loads metadata from associated JSON and metadata files."""
         json_path = self.video_path.replace('mp4', 'json')
         self.video_info = utils.load_camera_json(json_path)
@@ -54,6 +55,7 @@ class VideoLoader:
         self.data_asset_id = metadata['_id']
         self.mouse_id = metadata['subject']['subject_id']
         self.rig_id = metadata['session']['rig_id']
+        self.session_type = metadata['session']['session_type']
         self.project = metadata['data_description']['platform']['abbreviation']
 
     def _get_timestamps(self):

@@ -156,3 +156,54 @@ def get_zarr_path(self, path_to: str = 'gray_frames') -> str:
     
     filename = 'processed_frames_zarr' if path_to == 'gray_frames' else 'motion_energy_frames.zarr'
     return os.path.join(zarr_path, filename)
+
+import pandas as pd
+import logging
+import utils
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def create_metadata_dataframe(video_path: str) -> pd.DataFrame:
+    """
+    Loads metadata from a file and converts it into a Pandas DataFrame.
+
+    Args:
+        video_path (str): Path to the video file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing session type and data asset ID.
+
+    Raises:
+        ValueError: If metadata is missing required fields.
+        FileNotFoundError: If the metadata file cannot be loaded.
+    """
+    try:
+        # Load metadata
+        metadata = load_metadata_file(video_path.split('behavior-videos')[0])
+
+        # Extract relevant fields
+        session_type = metadata.get('session', {}).get('session_type')
+        data_asset_id = metadata.get('_id')
+
+        # Ensure required fields are present
+        if session_type is None or data_asset_id is None:
+            raise ValueError("Missing required fields: 'session_type' or '_id' in metadata.")
+
+        # Create DataFrame
+        df = pd.DataFrame({'Session Type': [session_type], 'Data Asset ID': [data_asset_id]})
+
+        logger.info(f"Created DataFrame with session type: {session_type} and data asset ID: {data_asset_id}")
+
+        return df
+
+    except FileNotFoundError as e:
+        logger.error(f"Metadata file not found for video path: {video_path}")
+        raise e
+    except Exception as e:
+        logger.error(f"Error loading metadata: {e}")
+        raise e
+
+
