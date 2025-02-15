@@ -19,7 +19,7 @@ def run():
         start_time = time.time()  # Start the timer
 
         # Process each video
-        for video_path in video_paths[:3]:
+        for video_path in video_paths[:9]:
             # Initialize VideoLoader object with the video path
             if tag in video_path.lower():
                 print(f'Processing {video_path}')
