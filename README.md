@@ -13,7 +13,7 @@ This repository provides the first step in behavior video QC pipeline to process
 
 Ensure you have the following dependencies installed:  
 ```bash
-pip install tqdm
+pip install tqdm zarr dask
 ```
 Additionally, make sure utils.py and VideoLoader.py are available in your project.
 
