@@ -189,7 +189,7 @@ def create_metadata_dataframe(video_path: str) -> pd.DataFrame:
         # Extract relevant fields
         session_type = metadata.get('session', {}).get('session_type')
         data_asset_id = metadata.get('_id')
-        data_asset_name = metadata.get('name').
+        data_asset_name = metadata.get('name')
 
         # Ensure required fields are present
         if session_type is None or data_asset_id is None:
