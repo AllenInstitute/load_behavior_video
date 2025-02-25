@@ -148,7 +148,7 @@ def get_zarr_path(self, path_to: str = 'gray_frames') -> str:
     Returns:
         str: Full path to the Zarr storage file.
     """
-    zarr_folder = f"{self.mouse_id}_{self.camera_label}_{self.data_asset_id}"
+    zarr_folder = f"{self.mouse_id}_{self.camera_label}_{self.data_asset_name}"
     zarr_path = os.path.join(get_results_folder(), zarr_folder)
     
     # Create directory if it doesn't exist
@@ -195,7 +195,7 @@ def create_metadata_dataframe(video_path: str) -> pd.DataFrame:
         # Create DataFrame
         df = pd.DataFrame({'Session Type': [session_type], 'Data Asset ID': [data_asset_id]})
 
-        logger.info(f"Created DataFrame with session type: {session_type} and data asset ID: {data_asset_id}")
+        logger.info(f"Created DataFrame with session type: {session_type} and data asset name: {data_asset_name}")
 
         return df
 

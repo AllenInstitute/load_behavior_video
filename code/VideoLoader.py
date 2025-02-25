@@ -53,6 +53,7 @@ class VideoLoader:
         self.camera_label = self.video_info['CameraLabel']
         metadata = utils.load_metadata_file(self.video_path.split('behavior-videos')[0])
         self.data_asset_id = metadata['_id']
+        self.data_asset_name = metadata['name']
         self.mouse_id = metadata['subject']['subject_id']
         self.rig_id = metadata['session']['rig_id']
         self.session_type = metadata['session']['session_type']
