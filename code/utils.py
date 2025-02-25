@@ -166,6 +166,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+
+## EXTRA 
 def create_metadata_dataframe(video_path: str) -> pd.DataFrame:
     """
     Loads metadata from a file and converts it into a Pandas DataFrame.
