@@ -148,7 +148,7 @@ def get_zarr_path(self, path_to: str = 'gray_frames') -> str:
     Returns:
         str: Full path to the Zarr storage file.
     """
-    zarr_folder = f"{self.mouse_id}_{self.camera_label}_{self.data_asset_name}"
+    zarr_folder = f"{self.mouse_id}_{self.data_asset_name}_{self.camera_label}_frames"
     zarr_path = os.path.join(get_results_folder(), zarr_folder)
     
     # Create directory if it doesn't exist
