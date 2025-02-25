@@ -196,7 +196,7 @@ def create_metadata_dataframe(video_path: str) -> pd.DataFrame:
             raise ValueError("Missing required fields: 'session_type' or '_id' in metadata.")
 
         # Create DataFrame
-        df = pd.DataFrame({'Session Type': [session_type], 'Data Asset ID': [data_asset_id]}, 'Data Asset Name: [data_asset_name])
+        df = pd.DataFrame({'Session Type': [session_type], 'Data Asset ID': [data_asset_id], 'Data Asset Name: [data_asset_name]})
 
         logger.info(f"Created DataFrame with session type: {session_type} and data asset name: {data_asset_name}")
 
