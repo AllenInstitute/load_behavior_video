@@ -3,9 +3,10 @@ from tqdm import tqdm
 import utils
 import time  # Added for timing
 from VideoLoader import VideoLoader  # Correct import
+from pathlib import Path
 
-DATA_PATH = '/root/capsule/data'
-OUTPUT_PATH = '/root/capsule/results'
+DATA_PATH = Path("*/data/")#'/root/capsule/data'
+OUTPUT_PATH = Path("*/results/")'/root/capsule/results'
 tag = 'face'
 def run():
     def analyze_and_save_videos(data_folder=DATA_PATH, results_folder=OUTPUT_PATH, subselect=None):
