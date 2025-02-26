@@ -5,9 +5,10 @@ import dask
 import zarr
 import utils  # local module for metadata and video processing utilities
 import json
+import Path
 
-DATA_PATH = '/root/capsule/data/'
-OUTPUT_PATH = '/root/capsule/results/'
+DATA_PATH = Path("../data/")#'/root/capsule/data/'
+OUTPUT_PATH = Path("../results")#'/root/capsule/results/'
 
 class VideoLoader:
     """
