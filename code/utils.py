@@ -4,6 +4,12 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 from pathlib import Path
+import pandas as pd
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def load_camera_json(json_path: str) -> dict:
@@ -158,13 +164,7 @@ def get_zarr_path(self, path_to: str = 'gray_frames') -> str:
     filename = 'processed_frames_zarr' if path_to == 'gray_frames' else 'motion_energy_frames.zarr'
     return os.path.join(zarr_path, filename)
 
-import pandas as pd
-import logging
-import utils
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 
