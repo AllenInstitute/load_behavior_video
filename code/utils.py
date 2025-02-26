@@ -124,7 +124,7 @@ def get_results_folder() -> str:
     Returns:
         str: Path to the results folder.
     """
-    return '/root/capsule/results'
+    return Path('/results/')
 
 
 def object_to_dict(obj):

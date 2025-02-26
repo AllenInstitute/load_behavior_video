@@ -9,10 +9,8 @@ DATA_PATH = Path("/data/")#'/root/capsule/data'
 OUTPUT_PATH = Path("/results/")#'/root/capsule/results'
 tag = 'face'
 def run():
-    def analyze_and_save_videos(data_folder=DATA_PATH, results_folder=OUTPUT_PATH, subselect=None):
+    def analyze_and_save_videos(data_folder=DATA_PATH, subselect=None):
         # Ensure results directory exists
-        if not os.path.exists(results_folder):
-            os.makedirs(results_folder)
         
         # Get video paths from utils
         video_paths = utils.get_video_paths(directory=data_folder, subselect=subselect)
@@ -27,7 +25,7 @@ def run():
                 loader = VideoLoader(video_path=video_path)
             
                 # Process the video (load frames, metadata, timestamps, and save results)
-                loader._process(gray=True, start_sec = None, stop_sec = None, save_dir=results_folder)
+                loader._process(gray=True, start_sec = None, stop_sec = None)
             else:
                 print(f'processing only {tag} videos for now')
 
@@ -36,7 +34,7 @@ def run():
         print(f"Total time taken: {duration:.2f} seconds")
 
     # Example usage with subselect
-    analyze_and_save_videos(data_folder=DATA_PATH, results_folder=OUTPUT_PATH, subselect='multiplane')
+    analyze_and_save_videos(data_folder=DATA_PATH, subselect='multiplane')
 
 if __name__ == "__main__":
     run()

@@ -115,7 +115,7 @@ class VideoLoader:
         return self
 
 
-    def _process(self, start_sec: float = None, stop_sec: float = None, gray: bool = True, save_dir: str = OUTPUT_PATH):
+    def _process(self, start_sec: float = None, stop_sec: float = None, gray: bool = True):
         """
         Processes the video by loading frames, generating timestamps, and saving them in Zarr format.
         
