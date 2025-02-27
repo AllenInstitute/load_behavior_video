@@ -50,7 +50,7 @@ def load_metadata_file(root_dir: str) -> dict:
     print(f"Metadata file {metadata_file} not found in {root_dir}")
     return None
 
-def get_video_paths(directory: Path ) --> list[str]:
+def get_video_paths(directory: Path ) -> list[str]:
     return [
         str(p) for p in DATA_PATH.rglob(VIDEO_FILE_GLOB_PATTERN)
     ]
