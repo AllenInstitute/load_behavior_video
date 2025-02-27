@@ -11,6 +11,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+VIDEO_SUFFIXES = ('.mp4', '.avi', '.wmv', '.mov')
 
 def load_camera_json(json_path: str) -> dict:
     """
@@ -49,8 +50,13 @@ def load_metadata_file(root_dir: str) -> dict:
     print(f"Metadata file {metadata_file} not found in {root_dir}")
     return None
 
+def get_video_paths(directory: Path ) --> list[str]:
+    return [
+        str(p) for p in DATA_PATH.rglob(VIDEO_FILE_GLOB_PATTERN)
+    ]
 
-def get_video_paths(directory: Path = Path(/root/capsule/data), subselect: str = None) -> list:
+
+def get_video_paths_old(directory: Path = Path(/root/capsule/data), subselect: str = None) -> list:
     """
     Retrieve video file paths from the specified directory, optionally filtering by a subdirectory.
 
