@@ -52,7 +52,7 @@ def load_metadata_file(root_dir: str) -> dict:
 
 def get_video_paths(directory: Path ) -> list[str]:
     return [
-        str(p) for p in DATA_PATH.rglob(VIDEO_FILE_GLOB_PATTERN)
+        str(p) for p in directory.rglob(VIDEO_FILE_GLOB_PATTERN)
     ]
 
 
