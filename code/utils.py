@@ -56,7 +56,7 @@ def get_video_paths(directory: Path ) --> list[str]:
     ]
 
 
-def get_video_paths_old(directory: Path = Path(/root/capsule/data), subselect: str = None) -> list:
+def get_video_paths_old(directory: Path = Path('/root/capsule/data'), subselect: str = None) -> list:
     """
     Retrieve video file paths from the specified directory, optionally filtering by a subdirectory.
 

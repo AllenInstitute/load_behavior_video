@@ -8,11 +8,11 @@ from pathlib import Path
 DATA_PATH = Path("/data/")#'/root/capsule/data'
 tag = 'face'
 def run():
-    def analyze_and_save_videos(data_folder=DATA_PATH, subselect=None):
+    def analyze_and_save_videos(data_folder=DATA_PATH):
         # Ensure results directory exists
         
         # Get video paths from utils
-        video_paths = utils.get_video_paths(directory=data_folder, subselect=subselect)
+        video_paths = utils.get_video_paths(directory=data_folder)
 
         start_time = time.time()  # Start the timer
 
