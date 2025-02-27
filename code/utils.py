@@ -131,14 +131,30 @@ def process_chunk(start: int, chunk_size: int, frame_shape: tuple, video_path: s
     return np.stack(chunk)
 
 
-def get_results_folder() -> str:
+def get_results_folder(pipeline: bool = True) -> Path:
     """
     Get the results folder path.
 
     Returns:
         str: Path to the results folder.
     """
-    return Path('/results/')
+    if pipeline:
+        return Path('/results/')
+    else:
+        return Path('/root/capsule/results')
+
+
+def get_data_folder(pipeline: bool = True) -> Path:
+    """
+    Get the data folder path.
+
+    Returns:
+        str: Path to the results folder.
+    """
+    if pipeline:
+        return Path('/data/')
+    else:
+        return Path('/root/capsule/data')
 
 
 def object_to_dict(obj):
@@ -168,7 +184,7 @@ def get_zarr_path(self, path_to: str = 'gray_frames') -> str:
     # Create directory if it doesn't exist
     os.makedirs(zarr_path, exist_ok=True)
     
-    filename = 'processed_frames_zarr' if path_to == 'gray_frames' else 'motion_energy_frames.zarr'
+    filename = 'processed_frames.zarr' if path_to == 'gray_frames' else 'motion_energy_frames.zarr'
     return os.path.join(zarr_path, filename)
 
 

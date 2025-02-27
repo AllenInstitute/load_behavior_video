@@ -5,14 +5,14 @@ import time  # Added for timing
 from VideoLoader import VideoLoader  # Correct import
 from pathlib import Path
 
-DATA_PATH = Path("/data/")#'/root/capsule/data'
+DATA_PATH = utils.get_data_folder(pipeline=True)
 tag = 'face'
 def run():
-    def analyze_and_save_videos(data_folder):
+    def analyze_and_save_videos(DATA_PATH):
         # Ensure results directory exists
         
         # Get video paths from utils
-        video_paths = utils.get_video_paths(directory=data_folder)
+        video_paths = utils.get_video_paths(directory=DATA_PATH)
 
         start_time = time.time()  # Start the timer
 
@@ -33,7 +33,7 @@ def run():
         print(f"Total time taken: {duration:.2f} seconds")
 
     # Example usage with subselect
-    analyze_and_save_videos(data_folder=DATA_PATH)
+    analyze_and_save_videos(DATA_PATH=DATA_PATH)
 
 if __name__ == "__main__":
     run()
