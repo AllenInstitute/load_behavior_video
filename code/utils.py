@@ -50,7 +50,7 @@ def load_metadata_file(root_dir: str) -> dict:
     return None
 
 
-def get_video_paths(directory: str = '/root/capsule/data', subselect: str = None) -> list:
+def get_video_paths(directory: Path = Path(/root/capsule/data), subselect: str = None) -> list:
     """
     Retrieve video file paths from the specified directory, optionally filtering by a subdirectory.
 
