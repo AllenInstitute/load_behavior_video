@@ -11,7 +11,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-VIDEO_SUFFIXES = ('.mp4', '.avi', '.wmv', '.mov')
+#VIDEO_SUFFIXES = ('.mp4', '.avi', '.wmv', '.mov')
+VIDEO_FILE_GLOB_PATTERN = "*.mp4"
 
 def load_camera_json(json_path: str) -> dict:
     """
