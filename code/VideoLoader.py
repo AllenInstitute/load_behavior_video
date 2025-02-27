@@ -97,6 +97,7 @@ class VideoLoader:
             for start, chunk in zip(range(start_frame, stop_frame, self.chunk_size), chunks)
         ]
         dask_array = da.concatenate(dask_chunks, axis=0)
+        self.example_frame = dask_array[100,:,:]
 
         # save files
         self.frames_zarr_path = utils.get_zarr_path(self, path_to='gray_frames')
