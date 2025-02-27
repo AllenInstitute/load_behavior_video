@@ -8,7 +8,7 @@ from pathlib import Path
 DATA_PATH = Path("/data/")#'/root/capsule/data'
 tag = 'face'
 def run():
-    def analyze_and_save_videos(data_folder=DATA_PATH):
+    def analyze_and_save_videos(data_folder):
         # Ensure results directory exists
         
         # Get video paths from utils
@@ -33,7 +33,7 @@ def run():
         print(f"Total time taken: {duration:.2f} seconds")
 
     # Example usage with subselect
-    analyze_and_save_videos(data_folder=DATA_PATH, subselect='multiplane')
+    analyze_and_save_videos(data_folder=DATA_PATH)
 
 if __name__ == "__main__":
     run()
