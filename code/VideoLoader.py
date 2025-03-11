@@ -109,7 +109,7 @@ class VideoLoader:
 
         del self.cap # remove cap to be able to save json
         meta_dict = utils.object_to_dict(self)
-        root_group.attrs['metadata'] = json.dumps(meta_dict)
+        root_group.attrs['metadata'] = json.dumps(meta_dict, cls=NumpyEncoder)
 
         print(f'Saved frames and metadata in {self.frames_zarr_path}')
 
@@ -136,4 +136,14 @@ class VideoLoader:
         self._load_video(start_sec=start_sec, stop_sec=stop_sec, gray=gray)
 
 
-        
+
+class NumpyEncoder(json.JSONEncoder):
+    """ Special json encoder for numpy types """
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
