@@ -5,23 +5,21 @@ import time  # Added for timing
 from VideoLoader import VideoLoader  # Correct import
 from pathlib import Path
 
-DATA_PATH = utils.get_data_folder(pipeline=True)
-tag = 'face'
+DATA_PATH = Path("/data")
+tag = 'Face'
+VIDEO_FILE_GLOB_PATTERN = "*"+tag+"*.mp4"
+
+# Get video paths 
+video_paths = [str(p) for p in DATA_PATH.rglob(VIDEO_FILE_GLOB_PATTERN)]
+Print('Found {len(video_paths)} {tag} videos') 
+
 def run():
-    def analyze_and_save_videos(DATA_PATH):
-        # Ensure results directory exists
-        
-        # Get video paths from utils
-        video_paths = utils.get_video_paths(directory=DATA_PATH)
-
+    # Process each video
+    for video_path in video_paths:
         start_time = time.time()  # Start the timer
-
-        # Process each video
-        for video_path in video_paths:
-            # Initialize VideoLoader object with the video path
-            if tag in video_path.lower():
-                print(f'Processing {video_path}')
-                loader = VideoLoader(video_path=video_path)
+        print(f'Processing {video_path}')
+        
+        loader = VideoLoader(video_path=video_path)
             
                 # Process the video (load frames, metadata, timestamps, and save results)
                 loader._process(gray=True, start_sec = None, stop_sec = None)
