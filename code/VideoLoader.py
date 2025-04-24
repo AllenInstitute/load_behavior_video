@@ -6,6 +6,7 @@ from pathlib import Path
 
 
 RESULTS = Path("/results")
+check_crop = True #will ask for input
 
 class VideoLoader:
     """
@@ -156,85 +157,17 @@ class VideoLoader:
         with me_metadata_path.open('w') as f:
             json.dump(meta_dict, f, indent=4)
 
+    def process_and_save_video(self):
+        self._get_metadata()
+        if check_crop:
+            self._check_crop()
+        self._get_timestamps()
+        self.process_video()
 
-
-    # def _get_timestamps(self):
-    #     """Generates timestamps for each frame using video metadata and FPS."""
-    #     duration_str = self.video_info['Duration']
-    #     hours, minutes, seconds = map(int, duration_str.split(':'))
-    #     total_seconds = hours * 3600 + minutes * 60 + seconds
-        
-    #     time_interval = 1 / self.fps
-    #     self.timestamps = list(np.arange(0, total_seconds, time_interval)[:self.video_info['FramesRecorded']])
-
-    # def _load_video(self, start_sec: float = None, stop_sec: float = None, gray: bool = True):
-    #     """
-    #     Loads frames within specified time range, converts them to grayscale if specified, and saves as Zarr.
-        
-    #     Args:
-    #         start_sec (float, optional): Start time in seconds for loading frames.
-    #         stop_sec (float, optional): End time in seconds for loading frames.
-    #         gray (bool): Convert frames to grayscale if True.
-        
-    #     Returns:
-    #         self: Instance of VideoLoader with loaded frames.
-    #     """
-    #     start_frame = int(start_sec * self.fps) if start_sec else 0
-    #     stop_frame = int(stop_sec * self.fps) if stop_sec else self.total_frames
-    #     frame_shape = (self.height, self.width)
-        
-    #     chunks = [
-    #         dask.delayed(utils.process_chunk)(start=start, chunk_size=self.chunk_size,
-    #                                           frame_shape=frame_shape, video_path=self.video_path)
-    #         for start in range(start_frame, stop_frame, self.chunk_size)
-    #     ]
-        
-    #     # Create Dask array from chunks and save to Zarr
-    #     dask_chunks = [
-    #         da.from_delayed(chunk, shape=(min(self.chunk_size, stop_frame - start), *frame_shape), dtype='f4')
-    #         for start, chunk in zip(range(start_frame, stop_frame, self.chunk_size), chunks)
-    #     ]
-    #     dask_array = da.concatenate(dask_chunks, axis=0)
-    #     self.example_frame = list(dask_array[100,:,:])
-
-    #     # save files
-    #     self.frames_zarr_path = utils.get_zarr_path(self, path_to='gray_frames')
-    #     zarr_store = zarr.DirectoryStore(self.frames_zarr_path)
-
-    #     # Create the Zarr group at the root (root_group) and save the array in the 'data' path (subgroup)
-    #     root_group = zarr.group(store=zarr_store, overwrite=True)
-    #     dask_array.to_zarr(zarr_store, component='data', overwrite=True)
-
-    #     del self.cap # remove cap to be able to save json
-    #     meta_dict = utils.object_to_dict(self)
-    #     root_group.attrs['metadata'] = json.dumps(meta_dict, cls=NumpyEncoder)
-
-    #     print(f'Saved frames and metadata in {self.frames_zarr_path}')
-
-    #     return self
-
-
-    # def _process(self, start_sec: float = None, stop_sec: float = None, gray: bool = True):
-    #     """
-    #     Processes the video by loading frames, generating timestamps, and saving them in Zarr format.
-        
-    #     Args:
-    #         start_sec (float, optional): Start time in seconds for frame loading.
-    #         stop_sec (float, optional): Stop time in seconds for frame loading.
-    #         gray (bool): Whether to convert frames to grayscale.
-    #         save_dir (str): Directory to save processed results.
-    #     """
-    #     if not hasattr(self, 'video_info'):
-    #         self._get_metadata()
-        
-
-    #     if not hasattr(self, 'timestamps'):
-    #         self._get_timestamps()
-        
-    #     self._load_video(start_sec=start_sec, stop_sec=stop_sec, gray=gray)
-
-
-
+    def _get_timestamps(self):
+        print('on to do list to save video timestamps')
+        return []
+    
 class NumpyEncoder(json.JSONEncoder):
     """ Special json encoder for numpy types """
     def default(self, obj):
