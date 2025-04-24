@@ -89,9 +89,10 @@ class VideoLoader:
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_shape = frame.shape
         
-        final_crop = utils.show_cropped_frame(frame_rgb, frame_shape, self.crop_region)
+        final_crop, example_frame = utils.show_cropped_frame(frame_rgb, frame_shape, self.crop_region)
 
         self.crop_region = final_crop
+        self.example_frame = example_frame
         print(f"Final crop coordinates: {final_crop}")
         cap.release()
 

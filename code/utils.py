@@ -57,7 +57,7 @@ def show_cropped_frame(frame_rgb, frame_shape, initial_crop):
         user_input = input("Does the crop look correct? (y/n): ").strip().lower()
         if user_input == 'y':
             print("Crop confirmed.")
-            return y, x, h, w
+            return (y, x, h, w), frame_copy
         else:
             # Get new crop values
             print("Enter new crop coordinates:")
@@ -65,6 +65,15 @@ def show_cropped_frame(frame_rgb, frame_shape, initial_crop):
             x = int(input(f"Enter new x (0 to {frame_width - 1}): "))
             h = int(input(f"Enter new height (1 to {frame_height - y}): "))
             w = int(input(f"Enter new width (1 to {frame_width - x}): "))
+
+            frame_copy = frame_rgb.copy()
+            cv2.rectangle(frame_copy, (x, y), (x + w, y + h), (255, 0, 0), 2)  # Red rectangle
+        
+            # Plot the frame
+            plt.imshow(frame_copy)
+            plt.title("Frame with Rectangle")
+            plt.axis('off')
+            plt.show()
 
 
 
