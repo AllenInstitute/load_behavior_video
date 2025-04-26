@@ -10,9 +10,22 @@ COPY git-askpass /
 
 RUN pip3 install -U --no-cache-dir \
     opencv-python==4.10.0.84 \
+    xarray
 
 RUN git clone https://github.com/AllenNeuralDynamics/comb \
     && cd comb \
+    && pip install -e .
+
+RUN git clone https://github.com/AllenNeuralDynamics/aind-multiplane-ophys-qc \
+    && cd aind-multiplane-ophys-qc \
+    && pip install -e .
+
+RUN git clone https://github.com/AllenNeuralDynamics/aind-ophys-data-access \
+    && cd aind-ophys-data-access \
+    && pip install -e .
+
+RUN git clone https://github.com/AllenNeuralDynamics/aind-codeocean-api \
+    && cd aind-codeocean-api \
     && pip install -e .
 
 ADD "https://github.com/coder/code-server/releases/download/v4.9.0/code-server-4.9.0-linux-amd64.tar.gz" /.code-server/code-server.tar.gz
