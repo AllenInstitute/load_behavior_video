@@ -10,8 +10,6 @@ COPY git-askpass /
 
 RUN pip3 install -U --no-cache-dir \
     opencv-python==4.10.0.84 \
-	pandas \
-	numpy
 
 RUN git clone https://github.com/AllenNeuralDynamics/comb \
     && cd comb \
