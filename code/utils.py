@@ -2,24 +2,11 @@ import os
 import json
 import cv2
 import numpy as np
-from tqdm import tqdm
 from pathlib import Path
-import pandas as pd
-import logging
 #from comb.processing.sync import sync_utilities
 #from comb import data_file_keys
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 #VIDEO_SUFFIXES = ('.mp4', '.avi', '.wmv', '.mov')
-
-
-
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
 
 def show_cropped_frame(frame_rgb, frame_shape, initial_crop):
     """
@@ -33,6 +20,7 @@ def show_cropped_frame(frame_rgb, frame_shape, initial_crop):
     Returns:
     - Final crop coordinates (y, x, height, width).
     """
+    import matplotlib.pyplot as plt
     frame_height, frame_width, _ = frame_shape
     total_pixels = frame_height * frame_width
     y, x, h, w = initial_crop

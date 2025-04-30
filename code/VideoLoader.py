@@ -161,8 +161,8 @@ class VideoLoader:
         self._get_metadata()
         if check_crop:
             self._check_crop()
-        self._get_timestamps()
-        self.process_video()
+        self._process_video()
+        self._save()
 
 # timestamps will be processed with COMB repo, apart from video QC and motion energy analysis.
     
