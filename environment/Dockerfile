@@ -10,7 +10,7 @@ COPY git-askpass /
 
 RUN pip3 install -U --no-cache-dir \
     opencv-python==4.10.0.84 \
-    aind-data-access-api[docdb]==0.16.1 \
+    aind-data-access-api[docdb]==0.16.1 
     # aind-data-schema==1.2.0 \
     # aind-qcportal-schema \
     # aws-requests-auth==0.4.3 
