@@ -164,9 +164,7 @@ class VideoLoader:
         self._get_timestamps()
         self.process_video()
 
-    def _get_timestamps(self):
-        print('on to do list to save video timestamps')
-        return []
+# timestamps will be processed with COMB repo, apart from video QC and motion energy analysis.
     
 class NumpyEncoder(json.JSONEncoder):
     """ Special json encoder for numpy types """

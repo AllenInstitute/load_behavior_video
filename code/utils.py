@@ -6,8 +6,8 @@ from tqdm import tqdm
 from pathlib import Path
 import pandas as pd
 import logging
-from comb.processing.sync import sync_utilities
-from comb import data_file_keys
+#from comb.processing.sync import sync_utilities
+#from comb import data_file_keys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
