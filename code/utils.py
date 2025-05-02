@@ -2,17 +2,70 @@ import os
 import json
 import cv2
 import numpy as np
-from tqdm import tqdm
 from pathlib import Path
-import pandas as pd
-import logging
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+#from comb.processing.sync import sync_utilities
+#from comb import data_file_keys
 
 #VIDEO_SUFFIXES = ('.mp4', '.avi', '.wmv', '.mov')
-VIDEO_FILE_GLOB_PATTERN = "*.mp4"
+
+def show_cropped_frame(frame_rgb, frame_shape, initial_crop):
+    """
+    Handles drawing the rectangle, displaying the frame, and user interaction for confirming crop.
+    
+    Parameters:
+    - frame_rgb: RGB image frame.
+    - frame_shape: Tuple containing frame dimensions.
+    - initial_crop: Tuple (y, x, height, width).
+    
+    Returns:
+    - Final crop coordinates (y, x, height, width).
+    """
+    import matplotlib.pyplot as plt
+    frame_height, frame_width, _ = frame_shape
+    total_pixels = frame_height * frame_width
+    y, x, h, w = initial_crop
+
+    while True:
+        # Draw rectangle
+        frame_copy = frame_rgb.copy()
+        cv2.rectangle(frame_copy, (x, y), (x + w, y + h), (255, 0, 0), 2)  # Red rectangle
+        
+        # Plot the frame
+        plt.imshow(frame_copy)
+        plt.title("Frame with Rectangle")
+        plt.axis('off')
+        plt.show()
+        
+        # Calculate pixels in the area
+        area_pixels = h * w
+        area_percentage = (area_pixels / total_pixels) * 100
+        
+        print(f"Area pixels: {area_pixels}")
+        print(f"Area percentage of total frame: {area_percentage:.2f}%")
+        
+        # Ask for user input
+        user_input = input("Does the crop look correct? (y/n): ").strip().lower()
+        if user_input == 'y':
+            print("Crop confirmed.")
+            return (y, x, h, w), frame_copy
+        else:
+            # Get new crop values
+            print("Enter new crop coordinates:")
+            y = int(input(f"Enter new y (0 to {frame_height - 1}): "))
+            x = int(input(f"Enter new x (0 to {frame_width - 1}): "))
+            h = int(input(f"Enter new height (1 to {frame_height - y}): "))
+            w = int(input(f"Enter new width (1 to {frame_width - x}): "))
+
+            frame_copy = frame_rgb.copy()
+            cv2.rectangle(frame_copy, (x, y), (x + w, y + h), (255, 0, 0), 2)  # Red rectangle
+        
+            # Plot the frame
+            plt.imshow(frame_copy)
+            plt.title("Frame with Rectangle")
+            plt.axis('off')
+            plt.show()
+
+
 
 def load_camera_json(json_path: str) -> dict:
     """
@@ -29,7 +82,7 @@ def load_camera_json(json_path: str) -> dict:
     return metadata.get('RecordingReport', {})
 
 
-def load_metadata_file(root_dir: str) -> dict:
+def load_session_metadata_file(root_dir: str) -> dict:
     """
     Load the metadata file from the specified directory.
 
@@ -51,186 +104,63 @@ def load_metadata_file(root_dir: str) -> dict:
     print(f"Metadata file {metadata_file} not found in {root_dir}")
     return None
 
-def get_video_paths(directory: Path ) -> list[str]:
-    return [
-        str(p) for p in directory.rglob(VIDEO_FILE_GLOB_PATTERN)
-    ]
 
 
-def get_video_paths_old(directory: Path = Path('/root/capsule/data'), subselect: str = None) -> list:
+def get_sync_file(video_path: Path) -> Path:
     """
-    Retrieve video file paths from the specified directory, optionally filtering by a subdirectory.
+    Searches the parent directory of the given directory for a single *_sync.h5 file.
 
-    Args:
-        directory (str): The directory to search for video files.
-        subselect (str): Optional subdirectory name to filter the search.
+    Parameters:
+    - directory: Path to the directory (str or Path)
 
     Returns:
-        list: A list of paths to video files.
-    """
-    video_paths = []
-    trial_videos_added = set()  # Track unique trial directories
-
-    for root, _, files in os.walk(directory):
-        if subselect and subselect not in root:
-            continue  # Skip directories that don't match the subselect
-        
-        trial_video_added = False
-        for file in tqdm(files, desc=f"Searching for videos in {root}"):
-            if file.lower().endswith(('.mp4', '.avi')):
-                full_path = os.path.join(root, file)
-                
-                # Ensure only one trial video per directory
-                if 'trial' in file.lower():
-                    if not trial_video_added and root not in trial_videos_added:
-                        video_paths.append(full_path)
-                        trial_video_added = True
-                        trial_videos_added.add(root)
-                else:
-                    print(f"Found video file: {full_path}")
-                    video_paths.append(full_path)
-
-    return video_paths
-
-
-def process_chunk(start: int, chunk_size: int, frame_shape: tuple, video_path: str) -> np.ndarray:
-    """
-    Process a chunk of video frames, converting each to grayscale and resizing.
-
-    Args:
-        start (int): Starting frame index.
-        chunk_size (int): Number of frames to load in the chunk.
-        frame_shape (tuple): Target frame shape as (height, width).
-        video_path (str): Path to the video file.
-
-    Returns:
-        np.ndarray: A stack of processed grayscale frames in the specified chunk.
+    - Path to the *_sync.h5 file if exactly one match is found.
 
     Raises:
-        ValueError: If no frames are returned for the specified chunk.
+    - FileNotFoundError: If no *_sync.h5 file is found.
+    - RuntimeError: If multiple *_sync.h5 files are found.
     """
-    cap = cv2.VideoCapture(video_path)
-    cap.set(cv2.CAP_PROP_POS_FRAMES, start)  # Set starting frame position
-    chunk = []
+    parent_dir = Path(video_path).parent.parent
+    sync_files = list(parent_dir.glob("*/*_sync.h5"))
 
-    for _ in range(chunk_size):
-        ret, frame = cap.read()
-        if not ret:
-            break  # Exit loop if there are no more frames
-        
-        # Convert to grayscale and resize to target shape
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray_frame = cv2.resize(gray_frame, (frame_shape[1], frame_shape[0]))
-        chunk.append(gray_frame)
-
-    cap.release()
+    if len(sync_files) == 0:
+        raise FileNotFoundError(f"No *_sync.h5 file found in {parent_dir}")
+    elif len(sync_files) > 1:
+        raise RuntimeError(f"Multiple *_sync.h5 files found in {parent_dir}: {sync_files}")
     
-    if not chunk:
-        raise ValueError(f"No frames found in chunk starting at {start}. Check the video length.")
-    
-    return np.stack(chunk)
+    return sync_files[0]
 
 
-def get_results_folder(pipeline: bool = True) -> Path:
+def construct_results_folder(self) -> str:
     """
-    Get the results folder path.
+    Construct a results folder name based on metadata fields.
 
     Returns:
-        str: Path to the results folder.
+        str: Folder name for results.
     """
-    if pipeline:
-        return Path('/results/')
-    else:
-        return Path('/root/capsule/results')
-
-
-def get_data_folder(pipeline: bool = True) -> Path:
-    """
-    Get the data folder path.
-
-    Returns:
-        str: Path to the results folder.
-    """
-    if pipeline:
-        return Path('/data/')
-    else:
-        return Path('/root/capsule/data')
+    try:
+        return f"{self.data_asset_name}_{self.camera_label}_motion_energy"
+    except KeyError as e:
+        raise KeyError(f"Missing required metadata field: {e}")
 
 
 def object_to_dict(obj):
     if hasattr(obj, "__dict__"):
-        return {key: object_to_dict(value) for key, value in vars(obj).items()}
+        meta_dict = {key: object_to_dict(value) for key, value in vars(obj).items()}
     elif isinstance(obj, list):
-        return [object_to_dict(item) for item in obj]
+        meta_dict = [object_to_dict(item) for item in obj]
     elif isinstance(obj, dict):
-        return {key: object_to_dict(value) for key, value in obj.items()}
+        meta_dict = {key: object_to_dict(value) for key, value in obj.items()}
     else:
-        return obj
+        meta_dict = obj
 
-
-def get_zarr_path(self, path_to: str = 'gray_frames') -> str:
-    """
-    Construct the path for Zarr storage based on mouse and camera metadata.
-
-    Args:
-        path_to (str): Type of frames to be saved ('gray_frames' or 'motion_energy_frames').
-
-    Returns:
-        str: Full path to the Zarr storage file.
-    """
-    zarr_folder = f"{self.data_asset_name}_{self.camera_label}_frames"
-    zarr_path = os.path.join(get_results_folder(), zarr_folder)
-    
-    # Create directory if it doesn't exist
-    os.makedirs(zarr_path, exist_ok=True)
-    
-    filename = 'processed_frames.zarr' if path_to == 'gray_frames' else 'motion_energy_frames.zarr'
-    return os.path.join(zarr_path, filename)
-
-
-
-
-
-## EXTRA 
-def create_metadata_dataframe(video_path: str) -> pd.DataFrame:
-    """
-    Loads metadata from a file and converts it into a Pandas DataFrame.
-
-    Args:
-        video_path (str): Path to the video file.
-
-    Returns:
-        pd.DataFrame: A DataFrame containing session type and data asset ID.
-
-    Raises:
-        ValueError: If metadata is missing required fields.
-        FileNotFoundError: If the metadata file cannot be loaded.
-    """
-    try:
-        # Load metadata
-        metadata = load_metadata_file(video_path.split('behavior-videos')[0])
-
-        # Extract relevant fields
-        session_type = metadata.get('session', {}).get('session_type')
-        data_asset_id = metadata.get('_id')
-        data_asset_name = metadata.get('name')
-
-        # Ensure required fields are present
-        if session_type is None or data_asset_id is None:
-            raise ValueError("Missing required fields: 'session_type' or '_id' in metadata.")
-
-        # Create DataFrame
-        df = pd.DataFrame({'Session Type': [session_type], 'Data Asset ID': [data_asset_id], 'Data Asset Name': [data_asset_name]})
-
-        logger.info(f"Created DataFrame with session type: {session_type} and data asset name: {data_asset_name}")
-
-        return df
-
-    except FileNotFoundError as e:
-        logger.error(f"Metadata file not found for video path: {video_path}")
-        raise e
-    except Exception as e:
-        logger.error(f"Error loading metadata: {e}")
-        raise e
-
+    # Convert Path to str for json serialization
+    if isinstance(meta_dict, dict):
+        return {k: str(v) if isinstance(v, Path) else v for k, v in meta_dict.items()}
+    elif isinstance(meta_dict, list):
+        return [str(v) if isinstance(v, Path) else v for v in meta_dict]
+    elif isinstance(meta_dict, Path):
+        return str(meta_dict)
+    else:
+        return meta_dict
 
