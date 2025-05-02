@@ -1,4 +1,4 @@
-import os
+
 from tqdm import tqdm
 import utils
 import time  # Added for timing
@@ -16,7 +16,7 @@ print('Found {len(video_paths)} {tag} videos')
 
 def run():
     # Process each video
-    for video_path in video_paths:
+    for video_path in tqdm(video_paths):
         start_time = time.time()  # Start the timer
         print(f'Processing {video_path}')
         sync_path = utils.get_sync_file(video_path)
