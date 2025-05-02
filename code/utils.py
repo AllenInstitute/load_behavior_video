@@ -120,8 +120,8 @@ def get_sync_file(video_path: Path) -> Path:
     - FileNotFoundError: If no *_sync.h5 file is found.
     - RuntimeError: If multiple *_sync.h5 files are found.
     """
-    parent_dir = Path(video_path).parent
-    sync_files = list(parent_dir.glob("*_sync.h5"))
+    parent_dir = Path(video_path).parent.parent
+    sync_files = list(parent_dir.glob("*/*_sync.h5"))
 
     if len(sync_files) == 0:
         raise FileNotFoundError(f"No *_sync.h5 file found in {parent_dir}")
@@ -131,18 +131,15 @@ def get_sync_file(video_path: Path) -> Path:
     return sync_files[0]
 
 
-def construct_results_folder(metadata: dict) -> str:
+def construct_results_folder(self) -> str:
     """
     Construct a results folder name based on metadata fields.
-
-    Args:
-        metadata (dict): Must contain 'camera_label', and 'data_asset_name'.
 
     Returns:
         str: Folder name for results.
     """
     try:
-        return f"{metadata['data_asset_name']}_{metadata['camera_label']}_motion_energy"
+        return f"{self.data_asset_name}_{self.camera_label}_motion_energy"
     except KeyError as e:
         raise KeyError(f"Missing required metadata field: {e}")
 
@@ -156,9 +153,14 @@ def object_to_dict(obj):
         meta_dict = {key: object_to_dict(value) for key, value in obj.items()}
     else:
         meta_dict = obj
-    
-    # Convert Path to str for json file
-    metadata_fixed = {k: str(v) if isinstance(v, Path) else v for k, v in meta_dict.items()}
-    
-    return metadata_fixed
+
+    # Convert Path to str for json serialization
+    if isinstance(meta_dict, dict):
+        return {k: str(v) if isinstance(v, Path) else v for k, v in meta_dict.items()}
+    elif isinstance(meta_dict, list):
+        return [str(v) if isinstance(v, Path) else v for v in meta_dict]
+    elif isinstance(meta_dict, Path):
+        return str(meta_dict)
+    else:
+        return meta_dict
 

@@ -2,11 +2,12 @@ import cv2
 import numpy as np
 import utils  # local module for metadata and video processing utilities
 import json
+import os
 from pathlib import Path
 
 
 RESULTS = Path("/results")
-check_crop = True #will ask for input
+check_crop = False #will ask for input
 
 class VideoLoader:
     """
@@ -31,10 +32,9 @@ class VideoLoader:
     def __init__(self, video_path: Path, sync_path: Path, crop_region: tuple, fps: int = None):
         """Initialize the VideoLoader with a video file path and optional FPS."""
         self.video_path = video_path
-        self.video_name = video_path.stem
+        self.video_name = Path(video_path).stem
         self.sync_path = sync_path
         self.fps = fps # a hack for videos where metadata json file or video for some reason contains wrong fps
-        self.crop = True
         self.crop_region = crop_region
         self._get_video_details()
 
@@ -56,7 +56,8 @@ class VideoLoader:
         json_path = self.video_path.replace('mp4', 'json')
         self.video_info = utils.load_camera_json(json_path)
         self.camera_label = self.video_info['CameraLabel']
-        metadata = utils.load_metadata_file(self.video_path.split('behavior-videos')[0])
+
+        metadata = utils.load_session_metadata_file(self.video_path.split('behavior-videos')[0])
         self.data_asset_id = metadata['_id']
         self.data_asset_name = metadata['name']
         self.mouse_id = metadata['subject']['subject_id']
@@ -117,10 +118,12 @@ class VideoLoader:
         if not ret:
             raise RuntimeError("Failed to read the first frame (metadata).")
 
-        results_folder = utils.construct_results_folder(self.metadata)
+        results_folder = utils.construct_results_folder(self)
         results_path = Path(RESULTS, results_folder)
+        os.makedirs(results_path, exist_ok=True)
         filename = self.video_name + "_processed.mp4"
-        output_path = (results_path, filename)
+        output_path = Path(results_path, filename)
+        print(output_path)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # MP4 format
         out = cv2.VideoWriter(output_path, fourcc, self.fps, (w, h), isColor=False)  # Grayscale frames
@@ -150,11 +153,11 @@ class VideoLoader:
 
     def _save(self):
         meta_dict = utils.object_to_dict(self)
-        results_folder = utils.construct_results_folder(self.metadata)
+        results_folder = utils.construct_results_folder(self)
         results_path = Path(RESULTS, results_folder)
-        filename = self.video_name + "metadata.json"
+        filename = self.video_name + "_metadata.json"
         metadata_path =  Path(results_path, filename)
-        with me_metadata_path.open('w') as f:
+        with metadata_path.open('w') as f:
             json.dump(meta_dict, f, indent=4)
 
     def process_and_save_video(self):
