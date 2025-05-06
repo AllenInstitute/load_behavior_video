@@ -12,7 +12,7 @@ crop_region = (100, 150, 200, 300) #y,x,height,width
 
 # Get video paths 
 video_paths = [str(p) for p in DATA_PATH.rglob(VIDEO_FILE_GLOB_PATTERN)]
-print('Found {len(video_paths)} {tag} videos') 
+print(f'Found {len(video_paths)} {tag} videos') 
 
 def run():
     # Process each video
