@@ -25,7 +25,7 @@ def run():
 
         end_time = time.time()  # End the timer
         duration = end_time - start_time
-        print(f"Total time taken: {duration:.2f} seconds")
+        print(f"Total time taken in load behavior video: {duration:.2f} seconds")
 
 if __name__ == "__main__":
     run()
