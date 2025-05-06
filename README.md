@@ -1,43 +1,61 @@
-# Video Analysis Pipeline  
+# VideoLoader: Preprocessing Pipeline for Experimental Video Data
 
-This repository provides the first step in behavior video QC pipeline to process and analyze videos using the `VideoLoader` class. The script loads video frames, extracts metadata and timestamps, and saves video frames and metadata in as a zarr group to a specified output directory.
+This module provides a robust pipeline to preprocess experimental videos—particularly those from behavior, face, or eye-tracking cameras used in neuroscience experiments. It handles metadata loading, grayscale conversion, optional cropping, and saves processed videos in a consistent format for downstream analysis.
 
-## Features  
-- Processes only videos containing a specified tag (default: `"face"`).  
-- Loads video frames and extracts metadata.  
-- Supports grayscale processing.  
-- Saves results in an output directory.  
-- Tracks processing time.  
+---
 
-## Prerequisites  
+## 🎯 Purpose
 
-Ensure you have the following dependencies installed:  
-```bash
-pip install tqdm zarr dask
+The `VideoLoader` class:
+- Loads raw `.mp4` video files
+- Optionally visualizes and adjusts cropping regions
+- Converts frames to grayscale and applies cropping
+- Drops metadata-containing first frame
+- Saves processed video in `.mp4` format
+- Exports structured metadata in JSON format
+
+---
+
+## 📦 Key Features
+
+- ✅ Handles and validates video metadata
+- ✅ Interactive crop preview for manual verification
+- ✅ Saves output video in grayscale MP4 format
+- ✅ Structured results saved per session, with consistent naming
+- ✅ Compatible with motion energy analysis and COMB sync processing
+
+---
+
+## 🧠 Class Overview: `VideoLoader`
+
+### Constructor
+```python
+VideoLoader(video_path: Path, sync_path: Path, crop_region: tuple, fps: int = None)
 ```
-Additionally, make sure utils.py and VideoLoader.py are available in your project.
+### Attributes
+video_path: Path to input video file
 
-## Parameters
+sync_path: Corresponding sync file (*_sync.h5)
 
-| Parameter      | Description                                    | Default Value           |
-|--------------|--------------------------------|-------------------------|
-| `DATA_PATH`  | Path to the directory containing videos. | `/root/capsule/data` |
-| `OUTPUT_PATH` | Path to save processed video results. | `/root/capsule/results` |
-| `tag`        | Filter for video files containing this tag. | `'face'` |
-| `subselect`  | Optional filter for selecting specific videos. | `'multiplane'` |
+crop_region: Tuple (y, x, height, width)
 
-### How It Works  
+fps: Override frames per second (optional)
 
-1. The script scans the `DATA_PATH` directory for videos matching the `subselect` filter.  
-2. It initializes a `VideoLoader` object for each video containing the `tag` in its filename.  
-3. It processes the video in grayscale and saves results to `OUTPUT_PATH`.  
-4. It prints the processing time upon completion.  
-5. The output is saved as a zarr group with fields "data" and "metadata".
+### Main Methods
+`process_and_save_video():` End-to-end processing
 
-### Example Output  
+Calls `_get_metadata(), _check_crop(), _process_video(), and _save()`
 
-```plaintext
-Processing /root/capsule/data/video1_face.mp4
-Processing /root/capsule/data/video2_face.mp4
-processing only face videos for now
-Total time taken: 15.32 seconds
+
+## 🛠 Dependencies
+Python 3.7+, OpenCV (cv2), NumPy, tqdm
+
+`utils.py` module with the following functions:
+
+* `load_camera_json(json_path)`
+* `load_session_metadata_file(parent_path)`
+* `construct_results_folder(self)`
+* `object_to_dict(obj)`
+* `show_cropped_frame(frame_rgb, shape, crop_region)`
+* `get_sync_file(video_path)`
+
