@@ -80,7 +80,7 @@ def get_sync_file(video_path: str) -> Path:
         FileNotFoundError: If no matching file is found.
         RuntimeError: If more than one matching file is found.
     """
-    root_dir = video_path.parent.parent
+    root_dir = Path(video_path).parent.parent
     pattern = str(Path(root_dir) / "**" / "*_sync.h5")
     matches = list(glob.glob(pattern, recursive=True))
 
