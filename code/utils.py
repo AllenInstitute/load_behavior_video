@@ -66,6 +66,30 @@ def show_cropped_frame(frame_rgb, frame_shape, initial_crop):
             plt.show()
 
 
+def get_sync_file(video_path: str) -> Path:
+    """
+    Recursively search for a single '*_sync.h5' file under the given root directory.
+
+    Args:
+        video_dir (str): The root directory to search from.
+
+    Returns:
+        Path: The path to the found sync file.
+
+    Raises:
+        FileNotFoundError: If no matching file is found.
+        RuntimeError: If more than one matching file is found.
+    """
+    root_dir = video_path.parent.parent
+    pattern = str(Path(root_dir) / "**" / "*_sync.h5")
+    matches = list(glob.glob(pattern, recursive=True))
+
+    if len(matches) == 0:
+        raise FileNotFoundError(f"No '*_sync.h5' file found under {root_dir}")
+    elif len(matches) > 1:
+        raise RuntimeError(f"Multiple '*_sync.h5' files found under {root_dir}: {matches}")
+    
+    return matches[0]
 
 def load_camera_json(json_path: str) -> dict:
     """
