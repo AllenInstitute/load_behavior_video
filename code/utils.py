@@ -105,32 +105,6 @@ def load_session_metadata_file(root_dir: str) -> dict:
     return None
 
 
-
-def get_sync_file(video_path: Path) -> Path:
-    """
-    Searches the parent directory of the given directory for a single *_sync.h5 file.
-
-    Parameters:
-    - directory: Path to the directory (str or Path)
-
-    Returns:
-    - Path to the *_sync.h5 file if exactly one match is found.
-
-    Raises:
-    - FileNotFoundError: If no *_sync.h5 file is found.
-    - RuntimeError: If multiple *_sync.h5 files are found.
-    """
-    parent_dir = Path(video_path).parent.parent
-    sync_files = list(parent_dir.glob("*/*_sync.h5"))
-
-    if len(sync_files) == 0:
-        raise FileNotFoundError(f"No *_sync.h5 file found in {parent_dir}")
-    elif len(sync_files) > 1:
-        raise RuntimeError(f"Multiple *_sync.h5 files found in {parent_dir}: {sync_files}")
-    
-    return sync_files[0]
-
-
 def construct_results_folder(self) -> str:
     """
     Construct a results folder name based on metadata fields.
