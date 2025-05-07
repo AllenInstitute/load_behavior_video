@@ -8,7 +8,7 @@ from pathlib import Path
 DATA_PATH = Path("/data")
 tag = 'Nose'
 VIDEO_FILE_GLOB_PATTERN = "*"+tag+"*.mp4"
-crop_region = (100, 150, 200, 300) #y,x,height,width
+crop_region = (100, 150, 240, 320) #y,x,height,width
 
 # Get video paths 
 video_paths = [str(p) for p in DATA_PATH.rglob(VIDEO_FILE_GLOB_PATTERN)]
