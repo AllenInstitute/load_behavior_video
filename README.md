@@ -1,6 +1,6 @@
 # VideoLoader: Preprocessing Pipeline for Experimental Video Data
 
-This module provides a robust pipeline to preprocess experimental videos—particularly those from behavior, face, or eye-tracking cameras used in neuroscience experiments. It handles metadata loading, grayscale conversion, optional cropping, and saves processed videos in a consistent format for downstream analysis.
+This module provides a robust pipeline to preprocess experimental videos—particularly those from behavior, face, or eye-tracking cameras used in neuroscience experiments. It handles metadata loading, grayscale conversion, optional cropping, and saves processed videos in a consistent format for downstream analysis. While sync path is saved, the timestamp alignment should be done in the further analysis steps. 
 
 ---
 
