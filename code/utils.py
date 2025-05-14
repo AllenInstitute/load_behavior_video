@@ -92,19 +92,40 @@ def get_sync_file(video_path: str) -> Path:
     
     return matches[0]
 
-def load_camera_json(json_path: str) -> dict:
+# def load_camera_json(json_path: str) -> dict:
+#     """
+#     Load camera metadata from a JSON file.
+
+#     Args:
+#         json_path (str): Path to the JSON file.
+
+#     Returns:
+#         dict: Metadata dictionary extracted from the 'RecordingReport' field in the JSON file.
+#     """
+#     with open(json_path, 'r') as file:
+#         metadata = json.load(file)
+#     return metadata.get('RecordingReport', {})
+
+
+def extract_camera_label(file_path: str) -> str:
     """
-    Load camera metadata from a JSON file.
+    Extracts the camera label (e.g., "Behavior") from the given file path.
 
     Args:
-        json_path (str): Path to the JSON file.
+        file_path (str): Path to the video file.
 
     Returns:
-        dict: Metadata dictionary extracted from the 'RecordingReport' field in the JSON file.
+        str: The extracted camera label.
     """
-    with open(json_path, 'r') as file:
-        metadata = json.load(file)
-    return metadata.get('RecordingReport', {})
+    filename = Path(file_path).stem  # Extract the filename without extension
+    parts = filename.split('_')
+    
+    # The camera label is typically the second last element
+    if len(parts) >= 2:
+        return parts[-2]
+    else:
+        raise ValueError(f"Unexpected filename format: {filename}")
+
 
 
 def load_session_metadata_file(root_dir: str) -> dict:
