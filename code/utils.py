@@ -124,19 +124,13 @@ def extract_camera_label(file_path: str) -> str:
         if len(parts) >= 2:
             return parts[-2]
         else:
-            return "unknown"
-    except:
+            path_parts = Path(file_path).parts
+            idx = path_parts.index("behavior_videos")
+            return path_parts[idx + 1]
+    except: # this is looking for camera name in the folder name
         print(f"Unexpected filename format: {filename}")
         return "unknown"
 
-    try: # this is to extract camera label from folder name
-        path_parts = Path(file_path).parts
-        idx = path_parts.index("behavior_videos")
-        return path_parts[idx + 1]
-    except:
-        print(f"'behavior_videos' not found in path: {file_path}")
-        return "unknown"
-    
 
 def load_session_metadata_file(root_dir: str) -> dict:
     """
