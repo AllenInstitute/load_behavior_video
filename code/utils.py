@@ -118,13 +118,24 @@ def extract_camera_label(file_path: str) -> str:
         str: The extracted camera label.
     """
     filename = Path(file_path).stem  # Extract the filename without extension
-    parts = filename.split('_')
-    
-    # The camera label is typically the second last element
-    if len(parts) >= 2:
-        return parts[-2]
-    else:
-        raise ValueError(f"Unexpected filename format: {filename}")
+    try: # this is to extract camera label from filename
+        parts = filename.split('_')
+        
+        # The camera label is typically the second last element
+        if len(parts) >= 2:
+            return parts[-2]
+        else:
+            print(f"Unexpected filename format: {filename}")
+
+    try: # this is to extract camera label from folder name
+        path_parts = Path(file_path).parts
+        idx = path_parts.index("behavior_videos")
+        return path_parts[idx + 1]
+    except ValueError:
+        raise ValueError(f"'behavior_videos' not found in path: {file_path}")
+    except IndexError:
+        raise ValueError(f"Camera name not found after 'behavior_videos' in path: {file_path}")
+
 
 
 
