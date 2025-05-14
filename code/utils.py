@@ -92,19 +92,51 @@ def get_sync_file(video_path: str) -> Path:
     
     return matches[0]
 
-def load_camera_json(json_path: str) -> dict:
+# def load_camera_json(json_path: str) -> dict:
+#     """
+#     Load camera metadata from a JSON file.
+
+#     Args:
+#         json_path (str): Path to the JSON file.
+
+#     Returns:
+#         dict: Metadata dictionary extracted from the 'RecordingReport' field in the JSON file.
+#     """
+#     with open(json_path, 'r') as file:
+#         metadata = json.load(file)
+#     return metadata.get('RecordingReport', {})
+
+
+def extract_camera_label(file_path: str) -> str:
     """
-    Load camera metadata from a JSON file.
+    Extracts the camera label (e.g., "Behavior") from the given file path.
 
     Args:
-        json_path (str): Path to the JSON file.
+        file_path (str): Path to the video file.
 
     Returns:
-        dict: Metadata dictionary extracted from the 'RecordingReport' field in the JSON file.
+        str: The extracted camera label.
     """
-    with open(json_path, 'r') as file:
-        metadata = json.load(file)
-    return metadata.get('RecordingReport', {})
+    filename = Path(file_path).stem  # Extract the filename without extension
+    try: # this is to extract camera label from filename
+        parts = filename.split('_')
+        
+        # The camera label is typically the second last element
+        if len(parts) >= 2:
+            return parts[-2]
+        else:
+            print(f"Unexpected filename format: {filename}")
+
+    try: # this is to extract camera label from folder name
+        path_parts = Path(file_path).parts
+        idx = path_parts.index("behavior_videos")
+        return path_parts[idx + 1]
+    except ValueError:
+        raise ValueError(f"'behavior_videos' not found in path: {file_path}")
+    except IndexError:
+        raise ValueError(f"Camera name not found after 'behavior_videos' in path: {file_path}")
+
+
 
 
 def load_session_metadata_file(root_dir: str) -> dict:
