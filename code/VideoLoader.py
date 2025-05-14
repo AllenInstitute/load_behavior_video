@@ -54,7 +54,6 @@ class VideoLoader:
     #  Need to add session information
         """Loads metadata from associated JSON and metadata files."""
         metadata = utils.load_session_metadata_file(self.video_path.split('behavior-videos')[0])
-        self.video_info = {}
         self.camera_label = utils.extract_camera_label(self.video_path)
         self.data_asset_id = metadata['_id']
         self.data_asset_name = metadata['name']
