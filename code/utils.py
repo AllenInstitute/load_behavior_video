@@ -120,13 +120,14 @@ def extract_camera_label(file_path: str) -> str:
     filename = Path(file_path).stem  # Extract the filename without extension
     try: # this is to extract camera label from filename
         parts = filename.split('_')
-        
         # The camera label is typically the second last element
         if len(parts) >= 2:
             return parts[-2]
         else:
-            print(f"Unexpected filename format: {filename}")
             return "unknown"
+    except:
+        print(f"Unexpected filename format: {filename}")
+        return "unknown"
 
     try: # this is to extract camera label from folder name
         path_parts = Path(file_path).parts
