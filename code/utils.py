@@ -137,9 +137,6 @@ def extract_camera_label(file_path: str) -> str:
         return "unknown"
     
 
-
-
-
 def load_session_metadata_file(root_dir: str) -> dict:
     """
     Load the metadata file from the specified directory.
